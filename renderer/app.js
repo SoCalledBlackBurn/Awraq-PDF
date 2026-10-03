@@ -29,6 +29,7 @@ const store = {
 };
 const uid = () => Math.random().toString(36).slice(2, 10);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const stemName = n => String(n || '').replace(/\.pdf$/i, '');
 const fmtSize = b => b > 1048576 ? (b / 1048576).toFixed(2) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
 
 /* ================= i18n ================= */
@@ -76,7 +77,11 @@ function modal(title, body, buttons = [{ label: t('OK'), value: true, primary: t
     const done = () => { d.removeEventListener('close', done); res(result); };
     d.addEventListener('close', done);
     $('dlgForm').onsubmit = e => { e.preventDefault(); const p = bb.querySelector('.primary'); p && p.click(); };
-    d.showModal(); onOpen && onOpen(d);
+    b.classList.remove('scroll'); d.showModal(); onOpen && onOpen(d);
+    requestAnimationFrame(() => { // scroll only when the content really doesn't fit; focus the first field
+      b.classList.toggle('scroll', b.scrollHeight - b.clientHeight > 3 || d.scrollHeight > innerHeight * 0.92);
+      if (document.activeElement === b || document.activeElement === d || !d.contains(document.activeElement)) { const f = b.querySelector('input:not([type=hidden]):not([type=checkbox]),select,textarea'); if (f) f.focus(); }
+    });
   });
 }
 async function prompt(title, label, value = '', { multiline = false, hint = '', type = 'text' } = {}) {
@@ -272,7 +277,7 @@ function renderTabs() {
     const d = el('div', { class: 'tab' + (x === active ? ' active' : '') + (x.dirty ? ' dirty' : ''), role: 'tab', title: x.path || x.name,
       onauxclick: e => { if (e.button === 1) { e.preventDefault(); closeTab(x); } },
       oncontextmenu: e => { e.preventDefault(); e.stopPropagation(); tabMenu(x, e.clientX, e.clientY); } },
-      x.protection || x.password ? el('span', { class: 'lock' }, icon('lock')) : null, el('span', { class: 'nm', text: x.name, dir: 'auto' }), close);
+      x.protection || x.password ? el('span', { class: 'lock' }, icon('lock')) : null, el('bdi', { class: 'nm', text: stemName(x.name), dir: 'auto' }), close);
     d._tab = x; d.addEventListener('pointerdown', e => tabPointerDown(e, d, x));
     box.append(d);
   }
@@ -348,7 +353,7 @@ $('tabbar').addEventListener('dblclick', e => { if (e.target === $('tabbar') || 
 
 function activate(tab) {
   if (active && active !== tab) active.container.hidden = true;
-  active = tab; $('welcome').hidden = !!tab; hideBanner();
+  active = tab; $('welcome').hidden = !!tab; hideBanner(); document.body.classList.toggle('no-doc', !tab);
   document.querySelectorAll('[data-need]').forEach(b => b.disabled = !tab);
   if (!tab) { renderTabs(); N && N.setTitle(t('Awraq PDF')); $('pageCount').textContent = '/ 0'; $('pageInput').value = ''; ['p-thumbs', 'p-outline', 'p-bookmarks', 'p-annots', 'p-attach'].forEach(i => $(i).innerHTML = ''); $('stLeft').textContent = ''; $('stRight').textContent = ''; renderRecent(); return; }
   tab.container.hidden = false; tab.container.focus({ preventScroll: true });
@@ -1205,6 +1210,56 @@ function stripOcrLayers(doc, page) {
   const xo = page.node.Resources().lookup(PL.PDFName.of('XObject')); keys.forEach(k => xo.delete(PL.PDFName.of(k)));
   return keys.length;
 }
+/* ---- Tesseract writes right-to-left words with a mirrored text matrix and logical-order glyphs.
+   PDF.js-based readers (this app, Firefox) read that backwards. Rewrite each word into the standard
+   layout (left-to-right drawing, glyphs in visual order) that Word/LibreOffice produce and every reader handles. ---- */
+const RTL_RE = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
+function hexToCodes(h) { const out = []; for (let i = 0; i + 4 <= h.length; i += 4) out.push(parseInt(h.slice(i, i + 4), 16)); return out; }
+const codesToHex = c => c.map(v => v.toString(16).toUpperCase().padStart(4, '0')).join('');
+const fnum = v => (Math.abs(v) < 1e-9 ? 0 : +v.toFixed(4));
+function fixOcrContent(text) {
+  const tokens = text.match(/<[0-9A-Fa-f\s]*>|\[|\]|\/[^\s\[\]<>\/()]+|[^\s\[\]<>\/()]+/g) || [];
+  const out = []; let ops = [], inBT = false, lm = [1, 0, 0, 1, 0, 0], font = null, size = 1, tz = 100, arr = null, changed = 0;
+  const flush = op => { out.push([...ops, op].join(' ')); ops = []; };
+  for (const tk of tokens) {
+    if (arr) { if (tk === ']') { ops.push(arr); arr = null; } else arr.push(tk); continue; }
+    if (tk === '[') { arr = []; continue; }
+    if (/^[A-Za-z'"*]+$/.test(tk) && !/^-?[\d.]+$/.test(tk)) {
+      const op = tk, a = ops;
+      if (op === 'BT') { inBT = true; lm = [1, 0, 0, 1, 0, 0]; flush(op); continue; }
+      if (op === 'ET') { inBT = false; flush(op); continue; }
+      if (!inBT) { flush(op); continue; }
+      if (op === 'Tm') { lm = a.map(Number); ops = []; continue; }
+      if (op === 'Td') { const [tx, ty] = a.map(Number); lm[4] += lm[0] * tx + lm[2] * ty; lm[5] += lm[1] * tx + lm[3] * ty; ops = []; continue; }
+      if (op === 'Tf') { font = a[0]; size = +a[1]; ops = []; continue; }
+      if (op === 'Tz') { tz = +a[0]; ops = []; continue; }
+      if (op === 'TJ' || op === 'Tj') {
+        const hexes = (op === 'TJ' ? a[0] : [a[0]]).filter(x => typeof x === 'string' && x.startsWith('<'));
+        let codes = hexToCodes(hexes.map(h => h.slice(1, -1).replace(/\s+/g, '')).join(''));
+        const n = codes.length, w = n * 0.5 * size * tz / 100; // DW 500 => 0.5 em per glyph
+        let [A, B, C, D, E, F] = lm;
+        if (A * D - B * C < 0) { E += A * w; F += B * w; A = -A; B = -B; changed++; } // un-mirror: start from the word's other edge
+        const str = String.fromCharCode(...codes);
+        if (RTL_RE.test(str)) { const core = codes.filter(c => c !== 0x20), sp = codes.length - core.length; codes = [...Array(sp).fill(0x20), ...core.reverse()]; }
+        out.push(`${font} ${fnum(size)} Tf ${fnum(tz)} Tz ${[A, B, C, D, E, F].map(fnum).join(' ')} Tm [ <${codesToHex(codes)}> ] TJ`);
+        ops = []; continue;
+      }
+      flush(op); continue;
+    }
+    ops.push(tk);
+  }
+  if (ops.length) out.push(ops.join(' '));
+  return { text: out.join('\n') + '\n', changed };
+}
+async function fixOcrPdf(bytes) {
+  try {
+    const d = await PL.PDFDocument.load(bytes); const page = d.getPage(0);
+    const raw = page.node.get(PL.PDFName.of('Contents')); const refs = raw instanceof PL.PDFArray ? raw.asArray() : [raw];
+    for (const ref of refs) { const st = d.context.lookup(ref); if (!(st instanceof PL.PDFRawStream)) continue;
+      const r = fixOcrContent(latin1(PL.decodePDFRawStream(st).decode())); d.context.assign(ref, d.context.stream(fromLatin1(r.text))); }
+    return await d.save();
+  } catch (e) { console.warn('OCR RTL fix skipped', e); return bytes; }
+}
 async function pageHasText(pdf, n) { const tc = await (await pdf.getPage(n)).getTextContent(); return tc.items.reduce((s, it) => s + (it.str ? it.str.trim().length : 0), 0) > 3; }
 async function removeOcrText() {
   const x = T(); if (!canModify(x)) return; let removed = 0;
@@ -1251,7 +1306,7 @@ async function runOcr(preset) {
       const res = await worker.recognize(c, { pdfTextOnly: true }, { pdf: true, text: true });
       const jpg = replace ? new Uint8Array(await (await new Promise(r => c.toBlob(r, 'image/jpeg', .9))).arrayBuffer()) : null;
       c.width = c.height = 0;
-      if (res.data.text && res.data.text.trim()) results.push({ n, replace, jpg, pdf: new Uint8Array(res.data.pdf), view: page.view });
+      if (res.data.text && res.data.text.trim()) results.push({ n, replace, jpg, pdf: await fixOcrPdf(new Uint8Array(res.data.pdf)), view: page.view });
     }
   } catch (e) { console.error(e); busy(); hideBanner(); try { worker && await worker.terminate(); } catch {} if (clean && clean !== x.pdf) clean.destroy(); return toast(t('Text recognition failed: {e}', { e: e.message || e })); }
   try { await worker.terminate(); } catch {}
@@ -1301,7 +1356,7 @@ async function redactMatches() {
   busy(); if (!found.length) return toast(t('No results'));
   mutate(x, () => x.annots.push(...found));
   if (!$('toolsbar').classList.contains('open')) $('bTools').click();
-  toast(t('{n} matches marked. Review them, then press "Apply redactions".', { n: num(found.length) }), 4500);
+  toast(t('Marked for redaction: {n}. Review, then press "Apply redactions".', { n: num(found.length) }), 4500);
 }
 async function applyRedactions() {
   const x = T(); if (!canModify(x)) return; const marks = x.annots.filter(a => a.type === 'redact');
@@ -1523,7 +1578,7 @@ function showKeys() {
   const tb = el('table', { class: 'keysTbl' }); k.forEach(([a, b]) => { const tr = tb.insertRow(); tr.insertCell().textContent = t(a); tr.insertCell().textContent = b; });
   modal(t('Keyboard shortcuts'), tb, [{ label: t('Close'), value: true, primary: true }]);
 }
-const REPO_URL = 'https://github.com/SoCalledBlackBurn/awraq-pdf';
+const REPO_URL = 'https://github.com/SoCalledBlackBurn/Awraq-PDF';
 async function showAbout() {
   const info = N ? await N.appInfo() : { version: '' };
   const body = el('div', { class: 'about' },
@@ -1637,7 +1692,7 @@ document.addEventListener('drop', async e => {
 });
 async function renderRecent() {
   if (!N) return; const list = await N.recent(), box = $('recentList'); box.innerHTML = ''; $('recentBox').hidden = !list.length;
-  list.slice(0, 8).forEach(p => box.append(el('li', {}, el('button', { class: 'r', onclick: () => openPath(p) }, el('span', { text: p.split(/[\\/]/).pop(), dir: 'auto' }), el('span', { class: 'pth', text: p })),
+  list.slice(0, 8).forEach(p => box.append(el('li', {}, el('button', { class: 'r', onclick: () => openPath(p) }, el('bdi', { class: 'rn', text: stemName(p.split(/[\\/]/).pop()), dir: 'auto' }), el('span', { class: 'pth', text: p })),
     el('button', { title: t('Remove from list'), onclick: async () => { await N.recentRemove(p); renderRecent(); } }, icon('x')))));
 }
 window.addEventListener('resize', () => { const x = T(); if (x && ['auto', 'page-fit', 'page-width'].includes(x.viewer.currentScaleValue)) x.viewer.currentScaleValue = x.viewer.currentScaleValue; });

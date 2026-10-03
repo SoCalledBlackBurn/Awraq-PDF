@@ -5,7 +5,7 @@
   },
   "name": "awraq-pdf",
   "productName": "Awraq PDF",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Awraq PDF — Open Source PDF Reader & Editor",
   "main": "main.js",
   "author": {
@@ -100,7 +100,7 @@
       {
         "provider": "github",
         "owner": "SoCalledBlackBurn",
-        "repo": "awraq-pdf",
+        "repo": "Awraq-PDF",
         "releaseType": "release"
       }
     ]
@@ -110,13 +110,13 @@
   },
   "updates": {
     "owner": "SoCalledBlackBurn",
-    "repo": "awraq-pdf"
+    "repo": "Awraq-PDF"
   },
   "license": "GPL-3.0-or-later",
-  "homepage": "https://github.com/SoCalledBlackBurn/awraq-pdf",
+  "homepage": "https://github.com/SoCalledBlackBurn/Awraq-PDF",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SoCalledBlackBurn/awraq-pdf.git"
+    "url": "https://github.com/SoCalledBlackBurn/Awraq-PDF.git"
   },
   "scripts": {
     "start": "electron .",

@@ -255,3 +255,21 @@ input, textarea, dialog td, .noteTip{-webkit-user-select:text;user-select:text}
 .tab.detaching{opacity:.75;box-shadow:0 8px 24px rgba(0,0,0,.28);outline:2px dashed var(--accent)}
 body.tab-detaching #stage::after{content:"";position:absolute;inset:6px;border:2px dashed var(--accent);border-radius:12px;pointer-events:none;z-index:100}
 .about-logo{width:84px;height:84px;display:block;margin:0 auto 4px}
+body.no-doc #side{display:none}
+#recentList .rn{font-weight:500;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#recentList .pth{direction:ltr;text-align:left}
+[dir=rtl] #recentList .pth{text-align:right}
+#stLeft{direction:ltr;unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%}
+/* dialogs never grow past the window: content scrolls, buttons stay visible */
+dialog{max-height:92vh;overflow:hidden}
+dialog[open]>form{display:flex;flex-direction:column;max-height:calc(92vh - 40px)}
+#dlgBody{overflow:auto;min-height:0;padding:2px}
+/* compact print options: label and control on one row */
+.pgrid{min-height:min(480px,62vh)}
+.popts{gap:7px}
+.prow{display:grid;grid-template-columns:110px 1fr;align-items:center;gap:8px}
+.prow>label{font-size:12.5px}
+.pctl select,.pctl input{min-height:30px;padding-block:3px}
+#dlgBody{overflow:visible}
+#dlgBody.scroll{overflow:auto}
+#dlgBody:focus{outline:none}

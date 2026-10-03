@@ -209,7 +209,6 @@ window.I18N = {
 "Text recognized on {n} pages. You can now search and copy it.": "تم التعرف على النص في {n} صفحة. يمكنك الآن البحث فيه ونسخه.",
 "Type what to search for first": "اكتب ما تريد البحث عنه أولًا",
 "Searching…": "جارٍ البحث…",
-"{n} matches marked. Review them, then press \"Apply redactions\".": "تم تعليم {n} نتيجة. راجعها ثم اضغط \"تطبيق الحجب\".",
 "Apply redactions": "تطبيق الحجب",
 "Nothing is marked yet. Use the redaction tool to drag over content, or search and press \"Redact matches\".": "لم يتم تعليم شيء بعد. استخدم أداة الحجب واسحب فوق المحتوى، أو ابحث واضغط \"حجب النتائج\".",
 "Redaction permanently removes the marked content. Affected pages ({p}) are converted to images so the hidden text can't be recovered; text on those pages will no longer be selectable unless you run OCR afterwards. This can't be undone once you save.": "الحجب يزيل المحتوى المحدد نهائيًا. الصفحات المتأثرة ({p}) تتحول إلى صور حتى لا يمكن استرجاع النص المخفي، ولن يكون نص هذه الصفحات قابلًا للتحديد إلا إذا شغّلت التعرف على النص بعدها. لا يمكن التراجع بعد الحفظ.",
@@ -496,7 +495,8 @@ window.I18N = {
 "Developed by Amr Mustafa M. M.": "تطوير: ⁦Amr Mustafa M. M.⁩",
 "This program is free software, licensed under the GNU General Public License version 3 or later. You may use, study, share and modify it. It comes with ABSOLUTELY NO WARRANTY.": "هذا البرنامج حر ومرخّص بموجب رخصة جنو العمومية (GNU GPL) الإصدار 3 أو أحدث. يحق لك استخدامه ودراسته ومشاركته وتعديله. يُقدَّم البرنامج دون أي ضمان على الإطلاق.",
 "Source code": "الكود المصدري",
-"License": "الرخصة"
+"License": "الرخصة",
+"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "تم التعليم للحجب: {n}. راجعها ثم اضغط \"تطبيق الحجب\"."
 },
 "fr": {
 "Unsaved changes": "Modifications non enregistrées",
@@ -658,7 +658,6 @@ window.I18N = {
 "Text recognized on {n} pages. You can now search and copy it.": "Texte reconnu sur {n} pages. Vous pouvez maintenant le rechercher et le copier.",
 "Type what to search for first": "Saisissez d'abord le texte à rechercher",
 "Searching…": "Recherche…",
-"{n} matches marked. Review them, then press \"Apply redactions\".": "{n} occurrences marquées. Vérifiez-les puis appuyez sur « Appliquer les caviardages ».",
 "Apply redactions": "Appliquer les caviardages",
 "Nothing is marked yet. Use the redaction tool to drag over content, or search and press \"Redact matches\".": "Rien n'est encore marqué. Utilisez l'outil de caviardage pour sélectionner du contenu, ou recherchez puis appuyez sur « Caviarder les résultats ».",
 "Redaction permanently removes the marked content. Affected pages ({p}) are converted to images so the hidden text can't be recovered; text on those pages will no longer be selectable unless you run OCR afterwards. This can't be undone once you save.": "Le caviardage supprime définitivement le contenu marqué. Les pages concernées ({p}) sont converties en images pour que le texte masqué soit irrécupérable ; leur texte ne sera plus sélectionnable sauf si vous lancez l'OCR ensuite. Irréversible après enregistrement.",
@@ -945,7 +944,8 @@ window.I18N = {
 "Developed by Amr Mustafa M. M.": "Développé par Amr Mustafa M. M.",
 "This program is free software, licensed under the GNU General Public License version 3 or later. You may use, study, share and modify it. It comes with ABSOLUTELY NO WARRANTY.": "Ce programme est un logiciel libre, sous licence publique générale GNU version 3 ou ultérieure. Vous pouvez l'utiliser, l'étudier, le partager et le modifier. Il est fourni SANS AUCUNE GARANTIE.",
 "Source code": "Code source",
-"License": "Licence"
+"License": "Licence",
+"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "Marqués pour caviardage : {n}. Vérifiez, puis appuyez sur « Appliquer les caviardages »."
 },
 "es": {
 "Unsaved changes": "Cambios sin guardar",
@@ -1107,7 +1107,6 @@ window.I18N = {
 "Text recognized on {n} pages. You can now search and copy it.": "Texto reconocido en {n} páginas. Ya puede buscarlo y copiarlo.",
 "Type what to search for first": "Primero escriba lo que quiere buscar",
 "Searching…": "Buscando…",
-"{n} matches marked. Review them, then press \"Apply redactions\".": "{n} coincidencias marcadas. Revíselas y pulse \"Aplicar censura\".",
 "Apply redactions": "Aplicar censura",
 "Nothing is marked yet. Use the redaction tool to drag over content, or search and press \"Redact matches\".": "Aún no hay nada marcado. Use la herramienta de censura arrastrando sobre el contenido, o busque y pulse \"Censurar coincidencias\".",
 "Redaction permanently removes the marked content. Affected pages ({p}) are converted to images so the hidden text can't be recovered; text on those pages will no longer be selectable unless you run OCR afterwards. This can't be undone once you save.": "La censura elimina para siempre el contenido marcado. Las páginas afectadas ({p}) se convierten en imágenes para que el texto oculto no pueda recuperarse; su texto ya no se podrá seleccionar salvo que ejecute OCR después. No se puede deshacer una vez guardado.",
@@ -1394,7 +1393,8 @@ window.I18N = {
 "Developed by Amr Mustafa M. M.": "Desarrollado por Amr Mustafa M. M.",
 "This program is free software, licensed under the GNU General Public License version 3 or later. You may use, study, share and modify it. It comes with ABSOLUTELY NO WARRANTY.": "Este programa es software libre, con licencia Pública General de GNU versión 3 o posterior. Puede usarlo, estudiarlo, compartirlo y modificarlo. Se ofrece SIN NINGUNA GARANTÍA.",
 "Source code": "Código fuente",
-"License": "Licencia"
+"License": "Licencia",
+"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "Marcados para censurar: {n}. Revise y pulse \"Aplicar censura\"."
 },
 "tr": {
 "Unsaved changes": "Kaydedilmemiş değişiklikler",
@@ -1556,7 +1556,6 @@ window.I18N = {
 "Text recognized on {n} pages. You can now search and copy it.": "{n} sayfada metin tanındı. Artık arayabilir ve kopyalayabilirsiniz.",
 "Type what to search for first": "Önce aranacak metni yazın",
 "Searching…": "Aranıyor…",
-"{n} matches marked. Review them, then press \"Apply redactions\".": "{n} eşleşme işaretlendi. Kontrol edin, ardından \"Karartmayı uygula\"ya basın.",
 "Apply redactions": "Karartmayı uygula",
 "Nothing is marked yet. Use the redaction tool to drag over content, or search and press \"Redact matches\".": "Henüz işaretli bir şey yok. Karartma aracıyla içeriğin üzerine sürükleyin veya arayıp \"Eşleşmeleri karart\"a basın.",
 "Redaction permanently removes the marked content. Affected pages ({p}) are converted to images so the hidden text can't be recovered; text on those pages will no longer be selectable unless you run OCR afterwards. This can't be undone once you save.": "Karartma işaretli içeriği kalıcı olarak kaldırır. Etkilenen sayfalar ({p}) gizlenen metin geri getirilemesin diye görsele dönüştürülür; ardından OCR çalıştırmazsanız bu sayfalardaki metin seçilemez. Kaydettikten sonra geri alınamaz.",
@@ -1843,7 +1842,8 @@ window.I18N = {
 "Developed by Amr Mustafa M. M.": "Geliştiren: Amr Mustafa M. M.",
 "This program is free software, licensed under the GNU General Public License version 3 or later. You may use, study, share and modify it. It comes with ABSOLUTELY NO WARRANTY.": "Bu program özgür yazılımdır ve GNU Genel Kamu Lisansı sürüm 3 veya sonrası ile lisanslanmıştır. Kullanabilir, inceleyebilir, paylaşabilir ve değiştirebilirsiniz. HİÇBİR GARANTİ olmaksızın sunulur.",
 "Source code": "Kaynak kodu",
-"License": "Lisans"
+"License": "Lisans",
+"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "Karartma için işaretlendi: {n}. Kontrol edin, ardından \"Karartmayı uygula\"ya basın."
 },
 "en": {
 "Approved": "APPROVED",

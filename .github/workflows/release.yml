@@ -1,7 +1,9 @@
-# Builds the Windows installer + portable exe and publishes them as a GitHub Release
-# whenever a version tag (e.g. v2.3.1) is pushed. Installed copies update themselves from these releases.
+# Builds the Windows installer + portable exe and publishes them as a GitHub Release.
+# Run it from the browser: Actions tab → "Release" → "Run workflow".
+# The release number comes from "version" in package.json.
 name: Release
 on:
+  workflow_dispatch:
   push:
     tags: ['v*']
 permissions:
