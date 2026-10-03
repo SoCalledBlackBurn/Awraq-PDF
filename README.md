@@ -26,10 +26,10 @@ Highlights, underlines, shapes, sticky notes, stamps and signatures, saved as re
 
 <img src="docs/screenshots/02-comments-and-signing.png" alt="Highlight, underline, box, arrow, sticky note, Approved stamp and a signature on a document, with the comments list" width="860">
 
-### Arabic OCR
-Scanned pages become searchable and copyable, fully offline. Shown here: searching an Arabic word in a scanned page.
+### OCR for scanned files
+Scanned pages become searchable and copyable, fully offline, in Arabic, English, French, Spanish, German and Turkish.
 
-<img src="docs/screenshots/03-arabic-ocr.jpg" alt="Search results highlighted in a scanned Arabic page after text recognition" width="860">
+<img src="docs/screenshots/03-ocr.jpg" alt="Search results highlighted in a scanned page after text recognition" width="860">
 
 ### Redaction
 Sensitive text is removed for good, not just covered. You can also search for a phrase and redact every match at once.
@@ -52,7 +52,7 @@ Live preview with paper size, orientation, color, two-sided printing and margins
 <img src="docs/screenshots/07-print-preview.png" alt="Print dialog with live preview" width="860">
 
 ### Dark mode
-A dark theme for the interface, here with a two-page spread of an Arabic report.
+A dark theme for the interface, shown here with a two-page spread.
 
 <img src="docs/screenshots/08-dark-mode.png" alt="Dark theme with a two-page spread" width="860">
 
