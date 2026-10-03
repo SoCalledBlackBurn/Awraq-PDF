@@ -496,7 +496,8 @@ window.I18N = {
 "This program is free software, licensed under the GNU General Public License version 3 or later. You may use, study, share and modify it. It comes with ABSOLUTELY NO WARRANTY.": "هذا البرنامج حر ومرخّص بموجب رخصة جنو العمومية (GNU GPL) الإصدار 3 أو أحدث. يحق لك استخدامه ودراسته ومشاركته وتعديله. يُقدَّم البرنامج دون أي ضمان على الإطلاق.",
 "Source code": "الكود المصدري",
 "License": "الرخصة",
-"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "تم التعليم للحجب: {n}. راجعها ثم اضغط \"تطبيق الحجب\"."
+"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "تم التعليم للحجب: {n}. راجعها ثم اضغط \"تطبيق الحجب\".",
+"Drop PDF files here": "أفلت ملفات PDF هنا"
 },
 "fr": {
 "Unsaved changes": "Modifications non enregistrées",
@@ -945,7 +946,8 @@ window.I18N = {
 "This program is free software, licensed under the GNU General Public License version 3 or later. You may use, study, share and modify it. It comes with ABSOLUTELY NO WARRANTY.": "Ce programme est un logiciel libre, sous licence publique générale GNU version 3 ou ultérieure. Vous pouvez l'utiliser, l'étudier, le partager et le modifier. Il est fourni SANS AUCUNE GARANTIE.",
 "Source code": "Code source",
 "License": "Licence",
-"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "Marqués pour caviardage : {n}. Vérifiez, puis appuyez sur « Appliquer les caviardages »."
+"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "Marqués pour caviardage : {n}. Vérifiez, puis appuyez sur « Appliquer les caviardages ».",
+"Drop PDF files here": "Déposez les fichiers PDF ici"
 },
 "es": {
 "Unsaved changes": "Cambios sin guardar",
@@ -1394,7 +1396,8 @@ window.I18N = {
 "This program is free software, licensed under the GNU General Public License version 3 or later. You may use, study, share and modify it. It comes with ABSOLUTELY NO WARRANTY.": "Este programa es software libre, con licencia Pública General de GNU versión 3 o posterior. Puede usarlo, estudiarlo, compartirlo y modificarlo. Se ofrece SIN NINGUNA GARANTÍA.",
 "Source code": "Código fuente",
 "License": "Licencia",
-"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "Marcados para censurar: {n}. Revise y pulse \"Aplicar censura\"."
+"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "Marcados para censurar: {n}. Revise y pulse \"Aplicar censura\".",
+"Drop PDF files here": "Suelte los archivos PDF aquí"
 },
 "tr": {
 "Unsaved changes": "Kaydedilmemiş değişiklikler",
@@ -1843,7 +1846,8 @@ window.I18N = {
 "This program is free software, licensed under the GNU General Public License version 3 or later. You may use, study, share and modify it. It comes with ABSOLUTELY NO WARRANTY.": "Bu program özgür yazılımdır ve GNU Genel Kamu Lisansı sürüm 3 veya sonrası ile lisanslanmıştır. Kullanabilir, inceleyebilir, paylaşabilir ve değiştirebilirsiniz. HİÇBİR GARANTİ olmaksızın sunulur.",
 "Source code": "Kaynak kodu",
 "License": "Lisans",
-"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "Karartma için işaretlendi: {n}. Kontrol edin, ardından \"Karartmayı uygula\"ya basın."
+"Marked for redaction: {n}. Review, then press \"Apply redactions\".": "Karartma için işaretlendi: {n}. Kontrol edin, ardından \"Karartmayı uygula\"ya basın.",
+"Drop PDF files here": "PDF dosyalarını buraya bırakın"
 },
 "en": {
 "Approved": "APPROVED",

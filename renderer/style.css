@@ -133,7 +133,7 @@ body.night .pdfViewer .page{background:#1a1a1a}
 #welcome{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto}
 .wcard{width:min(520px,100%);text-align:center;border:2px dashed var(--line);border-radius:16px;padding:36px 28px;background:color-mix(in srgb,var(--bar) 75%,transparent)}
 body.dragover .wcard{border-color:var(--accent)}
-body.dragover #stage::after{content:"أفلت ملفات PDF هنا";position:absolute;inset:8px;display:flex;align-items:center;justify-content:center;border:3px dashed var(--accent);border-radius:14px;background:color-mix(in srgb,var(--accent) 12%,transparent);font-size:20px;color:var(--accent);z-index:100;pointer-events:none}
+body.dragover #stage::after{content:attr(data-drop);position:absolute;inset:8px;display:flex;align-items:center;justify-content:center;border:3px dashed var(--accent);border-radius:14px;background:color-mix(in srgb,var(--accent) 12%,transparent);font-size:20px;color:var(--accent);z-index:100;pointer-events:none}
 .wcard h1{font-size:26px;margin:10px 0 6px;font-weight:600}
 .wcard p{color:var(--muted);margin:0 0 18px}
 .wcard .big{width:54px;height:54px;color:var(--accent)}

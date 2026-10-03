@@ -1,10 +1,8 @@
 <p align="center"><img src="docs/landing.jpg" alt="Awraq PDF" width="720"></p>
 
 <h1 align="center">Awraq PDF</h1>
-<h3 align="center" dir="rtl">أوراق PDF</h3>
 
 <p align="center"><b>Open Source PDF Reader &amp; Editor for Windows</b></p>
-<p align="center" dir="rtl">قارئ ومحرر PDF مجاني ومفتوح المصدر لويندوز</p>
 
 <p align="center">
   <a href="https://github.com/SoCalledBlackBurn/Awraq-PDF/releases/latest"><img alt="Download" src="https://img.shields.io/github/v/release/SoCalledBlackBurn/Awraq-PDF?label=download&color=2F86D0"></a>
@@ -12,7 +10,7 @@
   <img alt="Windows" src="https://img.shields.io/badge/platform-Windows-0F1B2D">
 </p>
 
-<p align="center">English · Français · Español · Türkçe · <span dir="rtl">العربية</span></p>
+<p align="center">Available in English, Arabic, French, Spanish and Turkish</p>
 
 ## Screenshots
 
@@ -68,17 +66,6 @@ Open or drop a PDF, turn images into a PDF, or pick up a recent file.
 - **Security:** AES-256 password protection, permissions, true redaction (including "redact every match").
 - **Tools:** OCR for scanned files (Arabic, English, French, Spanish, German, Turkish), reduce file size, merge, split, extract, reorder, rotate, delete and insert pages, images → PDF, export as PNG / TXT, fill forms.
 - **Printing:** built-in print dialog with live preview, paper size, orientation, color, two-sided and margins.
-
-<div dir="rtl">
-
-## بالعربي
-
-**أوراق PDF** برنامج مجاني ومفتوح المصدر لقراءة ملفات PDF وتعديلها على ويندوز، بواجهة عربية كاملة.
-يدعم التعليقات والتظليل والتوقيع، والتعرف على النص العربي في الملفات الممسوحة ضوئيًا (OCR)، والحجب النهائي للمعلومات الحساسة، وحماية الملفات بكلمة مرور، وتقليل الحجم، ودمج الملفات وتقسيمها، والطباعة مع المعاينة.
-
-**التحميل:** من صفحة [الإصدارات](https://github.com/SoCalledBlackBurn/Awraq-PDF/releases/latest).
-
-</div>
 
 ## Download
 

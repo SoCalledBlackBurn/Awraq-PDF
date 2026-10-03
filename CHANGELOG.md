@@ -10,7 +10,9 @@
 - **Improved:** the empty sidebar is hidden on the start screen.
 - **Fixed:** dialogs showed an unnecessary scrollbar and a focus outline around their content; the first field is now focused instead.
 - **Fixed:** the redaction message read "1 matches marked".
+- **Fixed:** the "Drop PDF files here" overlay always appeared in Arabic; it now follows the interface language.
 - **Added:** screenshots of every main feature in the README.
+- **Changed:** the README is now in English only.
 
 ## 2.3.1
 

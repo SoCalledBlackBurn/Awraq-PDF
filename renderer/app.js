@@ -45,6 +45,7 @@ function t(key, vars) {
 const num = n => Number(n).toLocaleString(LOC());
 function applyI18n() {
   const li = langInfo(); document.documentElement.lang = li.code; document.documentElement.dir = li.dir;
+  $('stage').dataset.drop = t('Drop PDF files here');
   document.querySelectorAll('[data-t]').forEach(e => { if (!e.dataset.k) e.dataset.k = e.textContent.trim(); e.textContent = t(e.dataset.k); });
   document.querySelectorAll('[title]').forEach(e => { if (!e.dataset.kt) e.dataset.kt = e.title; e.title = t(e.dataset.kt); });
   document.querySelectorAll('[placeholder]').forEach(e => { if (!e.dataset.kp) e.dataset.kp = e.placeholder; e.placeholder = t(e.dataset.kp); });
@@ -96,7 +97,7 @@ async function confirmBox(message, detail, buttons) {
 }
 function parseRange(s, max) {
   const out = new Set();
-  for (const part of s.split(/[,،\s]+/).filter(Boolean)) {
+  for (const part of s.split(/[,\u060C\s]+/).filter(Boolean)) {
     const m = /^(\d+)(?:\s*-\s*(\d+))?$/.exec(part.trim()); if (!m) return null;
     let a = +m[1], b = m[2] ? +m[2] : a; if (a > b) [a, b] = [b, a]; if (a < 1 || b > max) return null;
     for (let i = a; i <= b; i++) out.add(i);
@@ -1533,7 +1534,7 @@ async function speakFrom(x, n) {
   const token = speaking = {}; $('bSpeak').setAttribute('aria-pressed', 'true');
   for (; n <= x.pdf.numPages && speaking === token; n++) {
     x.viewer.currentPageNumber = n; const text = await pageText(x, n); if (!text) continue;
-    for (const ch of text.match(/[^.!?؟\n]{1,220}[.!?؟\n]*/g) || [text]) {
+    for (const ch of text.match(/[^.!?\u061F\n]{1,220}[.!?\u061F\n]*/g) || [text]) {
       if (speaking !== token) return;
       await new Promise(res => { const u = new SpeechSynthesisUtterance(ch); const ar = ARABIC.test(ch); const want = ar ? 'ar' : lang === 'ar' ? 'en' : lang;
         const v = speechSynthesis.getVoices().find(v => v.lang.toLowerCase().startsWith(want)) || speechSynthesis.getVoices().find(v => v.lang.toLowerCase().startsWith(ar ? 'ar' : 'en'));
