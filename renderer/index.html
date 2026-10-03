@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<!-- Awraq PDF — Copyright (C) 2026 Amr Mustafa M. M. — Licensed under the GNU GPL v3 or later -->
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; connect-src 'self' blob: data:; font-src 'self' data:">
+<title>Awraq PDF</title>
+<link rel="stylesheet" href="lib/pdf_viewer.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-open" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h11l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a1 1 0 0 1 1-1z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/></symbol>
+  <symbol id="i-print" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="7" y="14" width="10" height="7"/></symbol>
+  <symbol id="i-side" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M20 20l-4-4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M11 8v6M20 20l-4-4"/></symbol>
+  <symbol id="i-rotr" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></symbol>
+  <symbol id="i-rotl" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.7M4 4v5h5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1"/><path d="M10 8l4 2.5-4 2.5zM8 21h8M12 17v4"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-cursor" viewBox="0 0 24 24"><path d="M5 3l14 7-6 2-2 6z"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 13V5a1.5 1.5 0 0 1 3 0v6M11 10V4a1.5 1.5 0 0 1 3 0v7M14 10V5.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-.5a6 6 0 0 1-4.6-2.2L3 15.5a1.5 1.5 0 0 1 2.3-2L8 16"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 4h6M4 4v6M20 20h-6M20 20v-6"/><path d="M9 9l6 6"/><rect x="8" y="8" width="8" height="8" stroke-dasharray="2 2"/></symbol>
+  <symbol id="i-hl" viewBox="0 0 24 24"><path d="M9 15l-3 3h5l1-1M9 15l7-11 4 3-7 11z"/><path d="M3 21h18"/></symbol>
+  <symbol id="i-ul" viewBox="0 0 24 24"><path d="M7 4v7a5 5 0 0 0 10 0V4M5 20h14"/></symbol>
+  <symbol id="i-st" viewBox="0 0 24 24"><path d="M16 6a4 3 0 0 0-8 0c0 4 8 3 8 7a4 3 0 0 1-8 1M4 12h16"/></symbol>
+  <symbol id="i-rect" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></symbol>
+  <symbol id="i-ell" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8" ry="6"/></symbol>
+  <symbol id="i-line" viewBox="0 0 24 24"><path d="M5 19L19 5"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 19L19 5M10 5h9v9"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M4 4h16v12l-4 4H4z"/><path d="M16 20v-4h4M8 9h8M8 13h5"/></symbol>
+  <symbol id="i-stamp" viewBox="0 0 24 24"><path d="M9 4h6l-1 7h4a2 2 0 0 1 2 2v3H4v-3a2 2 0 0 1 2-2h4zM5 20h14"/></symbol>
+  <symbol id="i-sign" viewBox="0 0 24 24"><path d="M3 17c3-6 5-9 6-8s-3 8-1 8 3-4 4-4 0 4 2 4 3-2 3-2M3 21h18"/></symbol>
+  <symbol id="i-img" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-bm" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+  <symbol id="i-speak" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></symbol>
+  <symbol id="i-pages" viewBox="0 0 24 24"><rect x="4" y="3" width="11" height="15" rx="1"/><path d="M9 21h10a1 1 0 0 0 1-1V8"/></symbol>
+  <symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-redact" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="8" rx="1" fill="currentColor"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+</svg>
+
+<div id="tabbar">
+  <img class="tlogo" src="brand/symbol-64.png" alt="Awraq PDF" title="Awraq PDF">
+  <div id="tabs" role="tablist"></div>
+  <button id="bNewTab" title="Open file (Ctrl+O)"><svg class="i"><use href="#i-add"/></svg></button>
+</div>
+
+<header id="toolbar">
+  <button id="bSide" title="Sidebar (F4)" aria-pressed="true" data-need><svg class="i"><use href="#i-side"/></svg></button>
+  <button id="bOpen" title="Open (Ctrl+O)"><svg class="i"><use href="#i-open"/></svg></button>
+  <button id="bSave" title="Save (Ctrl+S)" data-need><svg class="i"><use href="#i-save"/></svg></button>
+  <button id="bPrint" title="Print (Ctrl+P)" data-need><svg class="i"><use href="#i-print"/></svg></button>
+  <span class="sep"></span>
+  <button id="bUndo" title="Undo (Ctrl+Z)" data-need><svg class="i"><use href="#i-undo"/></svg></button>
+  <button id="bRedo" title="Redo (Ctrl+Y)" data-need><svg class="i"><use href="#i-redo"/></svg></button>
+  <span class="sep"></span>
+  <div class="pg">
+    <button id="bPrev" title="Previous page" data-need><svg class="i"><use href="#i-up"/></svg></button>
+    <input id="pageInput" aria-label="Page number" data-need>
+    <span id="pageCount">/ 0</span>
+    <button id="bNext" title="Next page" data-need><svg class="i"><use href="#i-down"/></svg></button>
+  </div>
+  <span class="sep"></span>
+  <button id="bZoomOut" title="Zoom out (Ctrl -)" data-need><svg class="i"><use href="#i-minus"/></svg></button>
+  <select id="zoomSel" data-need aria-label="Zoom">
+    <option value="auto" data-t>Automatic</option><option value="page-width" data-t>Fit width</option><option value="page-fit" data-t>Fit page</option><option value="page-actual" data-t>Actual size</option>
+    <option value="0.5">50%</option><option value="0.75">75%</option><option value="1">100%</option><option value="1.25">125%</option><option value="1.5">150%</option><option value="2">200%</option><option value="3">300%</option><option value="4">400%</option>
+    <option value="custom" hidden>-</option>
+  </select>
+  <button id="bZoomIn" title="Zoom in (Ctrl +)" data-need><svg class="i"><use href="#i-plus"/></svg></button>
+  <span class="sep"></span>
+  <button id="bRotL" title="Rotate left (Ctrl+L)" data-need><svg class="i"><use href="#i-rotl"/></svg></button>
+  <button id="bRotR" title="Rotate right (Ctrl+R)" data-need><svg class="i"><use href="#i-rotr"/></svg></button>
+  <select id="scrollSel" data-need aria-label="Page layout" title="Page layout">
+    <option value="0" data-t>Continuous</option><option value="3" data-t>Single page</option><option value="1" data-t>Horizontal</option><option value="2" data-t>Grid</option>
+  </select>
+  <select id="spreadSel" data-need aria-label="Spreads" title="Spreads">
+    <option value="0" data-t>No spreads</option><option value="1" data-t>Odd spreads</option><option value="2" data-t>Even spreads</option>
+  </select>
+  <span class="grow"></span>
+  <button id="bTools" title="Comment, sign and redact" aria-pressed="false" data-need><svg class="i"><use href="#i-pen"/></svg><span class="lbl" data-t>Comment</span></button>
+  <button id="bSearch" title="Find (Ctrl+F)" aria-pressed="false" data-need><svg class="i"><use href="#i-search"/></svg></button>
+  <button id="bSpeak" title="Read aloud" aria-pressed="false" data-need><svg class="i"><use href="#i-speak"/></svg></button>
+  <button id="bNight" title="Night reading (Ctrl+I)" aria-pressed="false" data-need><svg class="i"><use href="#i-moon"/></svg></button>
+  <button id="bPresent" title="Presentation mode (F5)" data-need><svg class="i"><use href="#i-play"/></svg></button>
+  <button id="bFull" title="Full screen (F11)"><svg class="i"><use href="#i-full"/></svg></button>
+  <button id="bSettings" title="Settings"><svg class="i"><use href="#i-gear"/></svg></button>
+  <button id="bMenu" title="More" aria-haspopup="true"><svg class="i"><use href="#i-menu"/></svg></button>
+</header>
+
+<div id="toolsbar" class="subbar">
+  <div class="tgroup" id="toolBtns">
+    <button data-tool="select" title="Select text (V)" aria-pressed="true"><svg class="i"><use href="#i-cursor"/></svg></button>
+    <button data-tool="hand" title="Hand tool (H)"><svg class="i"><use href="#i-hand"/></svg></button>
+    <button data-tool="edit" title="Move, resize and delete comments (E)"><svg class="i"><use href="#i-edit"/></svg></button>
+    <span class="sep"></span>
+    <button data-tool="highlight" title="Highlight text"><svg class="i"><use href="#i-hl"/></svg></button>
+    <button data-tool="underline" title="Underline text"><svg class="i"><use href="#i-ul"/></svg></button>
+    <button data-tool="strike" title="Strike out text"><svg class="i"><use href="#i-st"/></svg></button>
+    <span class="sep"></span>
+    <button data-tool="ink" title="Pen (P)"><svg class="i"><use href="#i-pen"/></svg></button>
+    <button data-tool="marker" title="Freehand highlighter"><svg class="i"><use href="#i-hl"/></svg><small>~</small></button>
+    <button data-tool="rect" title="Rectangle"><svg class="i"><use href="#i-rect"/></svg></button>
+    <button data-tool="ellipse" title="Ellipse"><svg class="i"><use href="#i-ell"/></svg></button>
+    <button data-tool="line" title="Line"><svg class="i"><use href="#i-line"/></svg></button>
+    <button data-tool="arrow" title="Arrow"><svg class="i"><use href="#i-arrow"/></svg></button>
+    <span class="sep"></span>
+    <button data-tool="text" title="Text box (T)"><svg class="i"><use href="#i-text"/></svg></button>
+    <button data-tool="note" title="Sticky note (N)"><svg class="i"><use href="#i-note"/></svg></button>
+    <button data-tool="stamp" title="Stamp"><svg class="i"><use href="#i-stamp"/></svg></button>
+    <button data-tool="sign" title="Signature"><svg class="i"><use href="#i-sign"/></svg></button>
+    <button data-tool="image" title="Insert image"><svg class="i"><use href="#i-img"/></svg></button>
+    <span class="sep"></span>
+    <button data-tool="redact" title="Mark for redaction"><svg class="i"><use href="#i-redact"/></svg></button>
+    <button id="bApplyRedact" class="danger" title="Apply redactions"><span data-t>Apply redactions</span></button>
+  </div>
+  <span class="sep"></span>
+  <div class="tgroup" id="swatches"></div>
+  <input type="color" id="colorPick" title="Custom color">
+  <label class="mini"><span data-t>Width</span> <input type="range" id="widthIn" min="1" max="16" value="3"></label>
+  <label class="mini"><span data-t>Font</span> <select id="fontSize"><option>10</option><option selected>14</option><option>18</option><option>24</option><option>32</option><option>48</option></select></label>
+  <label class="mini"><input type="checkbox" id="fillIn"> <span data-t>Fill</span></label>
+  <span class="grow"></span>
+  <span id="toolHint"></span>
+</div>
+
+<div id="searchbar" class="subbar" role="search">
+  <input id="q" type="search" placeholder="Find in document…" aria-label="Find">
+  <button id="qPrev" title="Previous (Shift+F3)"><svg class="i"><use href="#i-up"/></svg></button>
+  <button id="qNext" title="Next (F3)"><svg class="i"><use href="#i-down"/></svg></button>
+  <label class="mini"><input type="checkbox" id="qAll" checked> <span data-t>Highlight all</span></label>
+  <label class="mini"><input type="checkbox" id="qCase"> <span data-t>Match case</span></label>
+  <label class="mini"><input type="checkbox" id="qWord"> <span data-t>Whole words</span></label>
+  <label class="mini"><input type="checkbox" id="qDia"> <span data-t>Match diacritics</span></label>
+  <span id="qinfo"></span>
+  <span class="grow"></span>
+  <button id="qRedact" title="Mark every match for redaction"><svg class="i"><use href="#i-redact"/></svg><span data-t>Redact matches</span></button>
+  <button id="qClose" title="Close (Esc)"><svg class="i"><use href="#i-x"/></svg></button>
+</div>
+
+<div id="banner" hidden><span id="bannerMsg"></span><span class="grow"></span><span id="bannerBtns"></span></div>
+
+<main>
+  <aside id="side">
+    <div class="sidetabs" role="tablist">
+      <button data-panel="thumbs" aria-selected="true" title="Pages"><svg class="i"><use href="#i-pages"/></svg></button>
+      <button data-panel="outline" title="Outline"><svg class="i"><use href="#i-menu"/></svg></button>
+      <button data-panel="bookmarks" title="Bookmarks"><svg class="i"><use href="#i-bm"/></svg></button>
+      <button data-panel="annots" title="Comments"><svg class="i"><use href="#i-note"/></svg></button>
+      <button data-panel="attach" title="Attachments"><svg class="i"><use href="#i-file"/></svg></button>
+    </div>
+    <div class="panel" id="p-thumbs"></div>
+    <div class="panel" id="p-outline" hidden></div>
+    <div class="panel" id="p-bookmarks" hidden></div>
+    <div class="panel" id="p-annots" hidden></div>
+    <div class="panel" id="p-attach" hidden></div>
+  </aside>
+  <section id="stage">
+    <div id="welcome">
+      <div class="wcard">
+        <img class="wlogo" src="brand/symbol.png" alt="">
+        <h1 class="wordmark" dir="ltr"><span>Awraq</span><span class="pdf">PDF</span></h1>
+        <p class="tagline" data-t>Open Source PDF Reader &amp; Editor</p>
+        <p data-t>Open a file or drop it here.</p>
+        <div class="wbtns">
+          <button class="primary" id="bOpen2"><svg class="i"><use href="#i-open"/></svg><span data-t>Open file</span></button>
+          <button id="bImages2"><svg class="i"><use href="#i-img"/></svg><span data-t>Images to PDF</span></button>
+        </div>
+        <div id="recentBox" hidden><h2 data-t>Recent files</h2><ul id="recentList"></ul></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="status"><span id="stLeft"></span><span class="grow"></span><span id="stRight"></span></footer>
+
+<div id="menu" class="popup" role="menu" hidden>
+  <button data-act="open"><span data-t>Open…</span><kbd>Ctrl+O</kbd></button>
+  <button data-act="newwin"><span data-t>New window</span><kbd>Ctrl+N</kbd></button>
+  <button data-act="images"><span data-t>Create PDF from images…</span></button>
+  <button data-act="save" data-need><span data-t>Save</span><kbd>Ctrl+S</kbd></button>
+  <button data-act="saveas" data-need><span data-t>Save as…</span><kbd>Ctrl+Shift+S</kbd></button>
+  <button data-act="flatten" data-need><span data-t>Save flattened copy…</span></button>
+  <button data-act="print" data-need><span data-t>Print…</span><kbd>Ctrl+P</kbd></button>
+  <button data-act="folder" data-need><span data-t>Show in folder</span></button>
+  <hr>
+  <button data-act="protect" data-need><span data-t>Password protection…</span></button>
+  <button data-act="compress" data-need><span data-t>Reduce file size…</span></button>
+  <button data-act="ocr" data-need><span data-t>Recognize text (OCR)…</span></button>
+  <button data-act="redact" data-need><span data-t>Apply redactions…</span></button>
+  <hr>
+  <button data-act="merge" data-need><span data-t>Merge another PDF…</span></button>
+  <button data-act="extract" data-need><span data-t>Extract pages…</span></button>
+  <button data-act="split" data-need><span data-t>Split document…</span></button>
+  <button data-act="blank" data-need><span data-t>Insert blank page after current</span></button>
+  <button data-act="delpage" data-need><span data-t>Delete current page</span></button>
+  <button data-act="rotpage" data-need><span data-t>Rotate current page only</span></button>
+  <hr>
+  <button data-act="png" data-need><span data-t>Export page as PNG…</span></button>
+  <button data-act="txt" data-need><span data-t>Export text as TXT…</span></button>
+  <button data-act="copytext" data-need><span data-t>Copy page text</span></button>
+  <hr>
+  <button data-act="bookmark" data-need><span data-t>Add bookmark</span><kbd>Ctrl+B</kbd></button>
+  <button data-act="goto" data-need><span data-t>Go to page…</span><kbd>Ctrl+G</kbd></button>
+  <button data-act="props" data-need><span data-t>Document properties</span><kbd>Ctrl+D</kbd></button>
+  <hr>
+  <button data-act="settings"><span data-t>Settings and language…</span></button>
+  <button data-act="keys"><span data-t>Keyboard shortcuts</span></button>
+  <button data-act="update"><span data-t>Check for updates</span></button>
+  <button data-act="about"><span data-t>About</span></button>
+</div>
+<div id="ctx" class="popup" role="menu" hidden></div>
+
+<dialog id="dlg"><form method="dialog" id="dlgForm"><h2 id="dlgTitle"></h2><div id="dlgBody"></div><div class="dlgBtns" id="dlgBtns"></div></form></dialog>
+<input type="file" id="imgFile" accept="image/png,image/jpeg,image/webp" hidden>
+<div id="printArea"></div>
+<div id="toast" role="status"></div>
+<div id="busy" hidden><div class="busybox"><div class="spin"></div><span id="busyMsg"></span><div id="busyBar"><i></i></div></div></div>
+
+<script src="i18n.js"></script>
+<script src="lib/pdf.min.js"></script>
+<script src="lib/pdf_viewer.js"></script>
+<script src="lib/pdf-lib.min.js"></script>
+<script src="lib/tesseract/tesseract.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

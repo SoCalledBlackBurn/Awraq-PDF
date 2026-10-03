@@ -1,0 +1,126 @@
+{
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "name": "awraq-pdf",
+  "productName": "Awraq PDF",
+  "version": "2.3.1",
+  "description": "Awraq PDF — Open Source PDF Reader & Editor",
+  "main": "main.js",
+  "author": {
+    "name": "Amr Mustafa M. M.",
+    "url": "https://github.com/SoCalledBlackBurn"
+  },
+  "build": {
+    "appId": "com.awraqpdf.app",
+    "productName": "Awraq PDF",
+    "copyright": "Copyright © 2026 Amr Mustafa M. M.",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "icon.png",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "electronVersion": "33.2.1",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Awraq PDF",
+      "artifactName": "Awraq-PDF-Setup-${version}.exe",
+      "installerLanguages": [
+        "ar_SA",
+        "en_US"
+      ],
+      "multiLanguageInstaller": true
+    },
+    "portable": {
+      "artifactName": "Awraq-PDF-Portable-${version}.exe"
+    },
+    "fileAssociations": [
+      {
+        "ext": "pdf",
+        "name": "PDF Document",
+        "description": "PDF Document",
+        "role": "Viewer",
+        "icon": "build/icon.ico"
+      }
+    ],
+    "extraResources": [
+      {
+        "from": "qpdf-win",
+        "to": "qpdf",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "LICENSE",
+        "to": "LICENSE.txt"
+      },
+      {
+        "from": "NOTICE.md",
+        "to": "NOTICE.md"
+      },
+      {
+        "from": "licenses",
+        "to": "licenses",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "SoCalledBlackBurn",
+        "repo": "awraq-pdf",
+        "releaseType": "release"
+      }
+    ]
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
+  },
+  "updates": {
+    "owner": "SoCalledBlackBurn",
+    "repo": "awraq-pdf"
+  },
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/SoCalledBlackBurn/awraq-pdf",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SoCalledBlackBurn/awraq-pdf.git"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64",
+    "release": "electron-builder --win --x64 --publish always"
+  }
+}

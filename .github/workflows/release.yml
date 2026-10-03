@@ -1,0 +1,19 @@
+# Builds the Windows installer + portable exe and publishes them as a GitHub Release
+# whenever a version tag (e.g. v2.3.1) is pushed. Installed copies update themselves from these releases.
+name: Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install
+      - run: npx electron-builder --win --x64 --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
