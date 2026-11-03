@@ -1,6 +1,6 @@
 // Crash recovery, closing a window with unsaved changes, password-protected files
 const fs = require('fs'); const { execFileSync } = require('child_process');
-const { launch, kill, ok, samplePdf, recoveryDir, focusDoc, pageCount, waitText } = require('./helpers');
+const { launch, kill, ok, samplePdf, recoveryDir, focusDoc, pageCount, waitText, waitFor } = require('./helpers');
 module.exports = async () => {
   const F = await samplePdf('recovery.pdf'); let { app, win, home } = await launch({ args: [F] });
   await win.waitForSelector('.tab'); await win.waitForTimeout(1200);
@@ -11,8 +11,9 @@ module.exports = async () => {
   await win.click('#bTools'); await win.click('button[data-tool=ellipse]');
   const b = await win.locator('.page[data-page-number="1"] canvas.annotOverlay').boundingBox();
   await win.mouse.move(b.x + 60, b.y + 60); await win.mouse.down(); await win.mouse.move(b.x + 200, b.y + 160, { steps: 5 }); await win.mouse.up();
-  await win.waitForTimeout(3500);
-  ok(recoveryDir(home) && fs.readdirSync(recoveryDir(home)).some(f => f.endsWith('.json')), 'unsaved work is mirrored to the recovery folder');
+  const mirrored = await waitFor(() => recoveryDir(home) && fs.readdirSync(recoveryDir(home)).some(f => f.endsWith('.json')));
+  await win.waitForTimeout(1500); // let the page bytes finish writing too
+  ok(mirrored, 'unsaved work is mirrored to the recovery folder');
   await kill(app); // simulated crash
   ({ app, win } = await launch({ args: [F], home }));
   ok(/recovered/i.test(await waitText(win, '#bannerMsg', /recovered/i)), 'reopening the file offers to restore');
@@ -25,7 +26,7 @@ module.exports = async () => {
   const closed = new Promise(r => app.on('close', r));
   await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].close());
   await Promise.race([closed, new Promise(r => setTimeout(r, 8000))]);
-  ok(!fs.readdirSync(recoveryDir(home)).some(f => f.endsWith('.json')), '"Don\'t save" discards the recovery data');
+  ok(!!(await waitFor(() => !recoveryDir(home) || !fs.readdirSync(recoveryDir(home)).some(f => f.endsWith('.json')), 8000)), '"Don\'t save" discards the recovery data');
   ok(fs.readFileSync(F).length > 0 && execFileSync('qpdf', ['--show-npages', F]).toString().trim() === '6', 'the original file was left untouched');
   // password protection goes through qpdf with an argument file (password never on the command line)
   ({ app, win } = await launch({ args: [F], home }));

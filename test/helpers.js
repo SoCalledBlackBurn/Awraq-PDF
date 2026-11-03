@@ -25,6 +25,8 @@ const kill = app => { try { app.process().kill('SIGKILL'); } catch {} return new
 const recoveryDir = home => [path.join(home, '.config', 'Awraq PDF', 'recovery'), path.join(home, 'Awraq PDF', 'recovery')].find(d => fs.existsSync(d)) || '';
 const focusDoc = win => win.locator('.vc:not([hidden])').focus();
 const pageCount = async win => (await win.textContent('#pageCount')).trim();
+/** Wait until fn() is truthy (polls; CI machines are slower than a desktop) */
+async function waitFor(fn, ms = 20000) { for (let t = 0; t < ms; t += 250) { try { const v = await fn(); if (v) return v; } catch {} await new Promise(r => setTimeout(r, 250)); } return null; }
 async function waitText(win, sel, re, ms = 20000) { for (let t = 0; t < ms; t += 250) { const s = await win.textContent(sel).catch(() => ''); if (re.test(s)) return s; await win.waitForTimeout(250); } return ''; }
 
 /** A 6-page document: page 4 is landscape, page 5 has /Rotate 90 */
@@ -38,4 +40,4 @@ async function samplePdf(name = 'sample.pdf') {
   }
   const file = path.join(TMP, name); fs.writeFileSync(file, await doc.save()); return file;
 }
-module.exports = { launch, kill, ok, failed, samplePdf, recoveryDir, focusDoc, pageCount, waitText, TMP, APP };
+module.exports = { launch, kill, ok, failed, samplePdf, recoveryDir, focusDoc, pageCount, waitText, waitFor, TMP, APP };

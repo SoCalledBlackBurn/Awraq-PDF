@@ -1,6 +1,6 @@
 // Watermark, inserting images as pages, outside changes, copying comments, undo from the toast, resizable sidebar
 const fs = require('fs'), path = require('path'); const { execFileSync } = require('child_process'); const { PDFDocument } = require('pdf-lib');
-const { launch, kill, ok, samplePdf, focusDoc, pageCount, waitText, TMP } = require('./helpers');
+const { launch, kill, ok, samplePdf, focusDoc, pageCount, waitText, waitFor, TMP } = require('./helpers');
 module.exports = async () => {
   const F = await samplePdf('features.pdf'); const { app, win, logs } = await launch({ args: [F] });
   await win.waitForSelector('.tab'); await win.waitForTimeout(1500);
@@ -52,7 +52,9 @@ module.exports = async () => {
   ok(await win.locator('#p-results mark').count() === 5, 'each result highlights the match');
   await win.click('#p-results .item >> nth=4'); await win.waitForTimeout(600); ok((await win.inputValue('#pageInput')) === '7', 'clicking a result goes to its page');
   // closing everything shows recent files as cards with a preview, and pins
-  await win.waitForTimeout(1500); await win.keyboard.press('Escape'); await focusDoc(win); await win.keyboard.press('Control+w'); await win.waitForSelector('#recentList li');
+  // the first-page preview for the start screen is made shortly after a file opens; wait until it exists
+  await waitFor(() => win.evaluate(() => Object.keys(localStorage).some(k => k.startsWith('rc:') && (JSON.parse(localStorage.getItem(k)) || {}).th)));
+  await win.keyboard.press('Escape'); await focusDoc(win); await win.keyboard.press('Control+w'); await win.waitForSelector('#recentList li');
   ok(await win.locator('#searchbar.open').count() === 0, 'search bar closes with the last document');
   ok(await win.locator('#recentList li img').count() === 1, 'recent file card shows a first-page preview');
   await win.hover('#recentList li'); await win.click('#recentList li button.pin'); ok(await win.locator('#recentList li.pinned').count() === 1, 'files can be pinned');
