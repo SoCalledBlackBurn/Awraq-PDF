@@ -20,6 +20,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { execFile } = require('child_process');
+const crypto = require('crypto');
 const { pathToFileURL } = require('url');
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true } }]);
@@ -36,7 +37,31 @@ function pdfArgs(argv) { return argv.slice(1).filter(a => /\.pdf$/i.test(a) && f
 function readRecent() { try { return JSON.parse(fs.readFileSync(recentFile(), 'utf8')).filter(p => fs.existsSync(p)); } catch { return []; } }
 function writeRecent(l) { try { fs.writeFileSync(recentFile(), JSON.stringify(l)); } catch {} }
 function addRecent(p) { const l = [p, ...readRecent().filter(x => x !== p)].slice(0, 15); writeRecent(l); try { app.addRecentDocument(p); } catch {} }
-function readFile(p, recent = true) { const b = fs.readFileSync(p); if (recent && /\.pdf$/i.test(p)) addRecent(p); return { path: p, name: path.basename(p), data: new Uint8Array(b.buffer, b.byteOffset, b.length) }; }
+function readFile(p, recent = true) { const b = fs.readFileSync(p); if (recent && /\.pdf$/i.test(p)) addRecent(p); return { path: p, name: path.basename(p), data: new Uint8Array(b.buffer, b.byteOffset, b.length), fp: fingerprint(p) }; }
+function fingerprint(p) { try { const st = fs.statSync(p); return st.size + ':' + Math.round(st.mtimeMs); } catch { return ''; } }
+/**
+ * Write a file without ever leaving a half-written original behind: write a temporary file next to it,
+ * flush it to disk, then swap it in. If another program holds the file open (Windows refuses the swap),
+ * fall back to writing in place; if that fails too, the error carries a code the renderer explains.
+ */
+const selfWrites = new Map(); // path -> fingerprint of what we wrote, so our own saves don't look like outside changes
+function writeFileSafe(p, data) {
+  try { writeFileSafe0(p, data); } finally { selfWrites.set(path.resolve(p).toLowerCase(), fingerprint(p)); }
+}
+function writeFileSafe0(p, data) {
+  const buf = Buffer.from(data), tmp = path.join(path.dirname(p), '.' + path.basename(p) + '.' + crypto.randomBytes(4).toString('hex') + '.awraq-tmp');
+  let fd = null;
+  try {
+    fd = fs.openSync(tmp, 'w'); fs.writeSync(fd, buf, 0, buf.length, 0); fs.fsyncSync(fd); fs.closeSync(fd); fd = null;
+    try { const mode = fs.statSync(p).mode; fs.chmodSync(tmp, mode); } catch {}
+    fs.renameSync(tmp, p);
+  } catch (e) {
+    if (fd !== null) { try { fs.closeSync(fd); } catch {} }
+    try { fs.rmSync(tmp, { force: true }); } catch {}
+    if (e.syscall === 'rename' || ['EPERM', 'EACCES', 'EBUSY', 'EXDEV'].includes(e.code)) { fs.writeFileSync(p, buf); return; } // may throw again with a clear code
+    throw e;
+  }
+}
 
 function qpdfPath() {
   if (process.platform === 'win32') {
@@ -52,7 +77,9 @@ function runQpdf(args, input) {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pdfr-'));
     const inP = path.join(dir, 'in.pdf'), outP = path.join(dir, 'out.pdf');
     if (input) fs.writeFileSync(inP, Buffer.from(input));
-    const a = args.map(x => x === '{in}' ? inP : x === '{out}' ? outP : x);
+    let a = args.map(x => x === '{in}' ? inP : x === '{out}' ? outP : x);
+    // Passwords must not appear on the command line, where any program on the computer can read them: pass the arguments in a private file instead
+    if (a.length > 1 && !a.some(x => /[\r\n]/.test(x))) { const af = path.join(dir, 'args.txt'); fs.writeFileSync(af, a.join('\n') + '\n', { mode: 0o600 }); a = ['@' + af]; }
     execFile(bin, a, { windowsHide: true, maxBuffer: 64 * 1024 * 1024 }, (err, stdout, stderr) => {
       const code = err ? (typeof err.code === 'number' ? err.code : -1) : 0;
       let data = null; try { if (fs.existsSync(outP)) data = new Uint8Array(fs.readFileSync(outP)); } catch {}
@@ -76,7 +103,7 @@ function createWindow({ bounds = null, maximize = !bounds, files = [], session =
   const w = new BrowserWindow({
     width: bounds?.width || 1280, height: bounds?.height || 840, ...(bounds && bounds.x != null ? { x: Math.round(bounds.x), y: Math.round(bounds.y) } : {}),
     minWidth: 720, minHeight: 480, title: 'Awraq PDF', backgroundColor: '#E4E8ED', show: false, icon: path.join(__dirname, 'icon.png'),
-    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: false, spellcheck: false }
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: true, spellcheck: false }
   });
   const id = w.webContents.id; wins.add(w); lastFocused = w;
   initialFor.set(id, { files, session }); if (adopt) adoptQueue.set(id, adopt);
@@ -91,8 +118,16 @@ function createWindow({ bounds = null, maximize = !bounds, files = [], session =
   w.on('focus', () => { lastFocused = w; });
   const keepBounds = () => { const s = sessions.get(id); if (s && !w.isDestroyed()) { s.bounds = w.getNormalBounds(); s.maximized = w.isMaximized(); writeSession(); } };
   w.on('resize', keepBounds); w.on('move', keepBounds);
-  w.on('close', () => { if (wins.size > 1) { sessions.delete(id); writeSession(); } });
-  w.on('closed', () => { wins.delete(w); initialFor.delete(id); adoptQueue.delete(id); if (lastFocused === w) lastFocused = [...wins].pop() || null; });
+  // Ask the page first, so it can offer Save / Don't save / Cancel for each changed file
+  w.on('close', e => {
+    if (!w.closeOK && !w.webContents.isCrashed() && !w.webContents.isDestroyed()) {
+      e.preventDefault(); w.webContents.send('close-request');
+      clearTimeout(w.closeT); w.closeT = setTimeout(() => { if (!w.isDestroyed() && w.webContents.isCrashed()) { w.closeOK = true; w.close(); } }, 4000);
+      return;
+    }
+    if (wins.size > 1) { sessions.delete(id); writeSession(); }
+  });
+  w.on('closed', () => { watchLists.delete(id); rewatch(); wins.delete(w); initialFor.delete(id); adoptQueue.delete(id); if (lastFocused === w) lastFocused = [...wins].pop() || null; });
   return w;
 }
 
@@ -135,7 +170,7 @@ else {
     const saved = prefs.restore ? readJSON(sessionFile(), []).filter(s => s && Array.isArray(s.tabs) && s.tabs.length) : [];
     if (files.length || !saved.length) createWindow({ files });
     else saved.forEach((s, i) => createWindow({ bounds: s.bounds, maximize: !!s.maximized || !s.bounds, session: s.tabs, files: [] }));
-    setupUpdater();
+    setupUpdater(); setTimeout(pruneRecovery, 15000);
   });
   app.on('window-all-closed', () => app.quit());
 }
@@ -146,7 +181,7 @@ ipcMain.handle('pending-adopt', e => { const v = adoptQueue.get(e.sender.id) || 
 ipcMain.handle('set-prefs', (_e, p) => { prefs = Object.assign(prefs, p); try { fs.writeFileSync(prefsFile(), JSON.stringify(prefs)); } catch {} });
 ipcMain.handle('session-update', (e, tabsList) => { const w = winOf(e); if (!w) return; sessions.set(e.sender.id, { tabs: tabsList, bounds: w.getNormalBounds(), maximized: w.isMaximized() }); writeSession(); });
 ipcMain.handle('new-window', () => { createWindow({}); });
-ipcMain.handle('close-window', e => { const w = winOf(e); if (w) setTimeout(() => w.close(), 50); });
+ipcMain.handle('close-window', e => { const w = winOf(e); if (w) { w.closeOK = true; setTimeout(() => { if (!w.isDestroyed()) w.close(); }, 50); } });
 /** A tab was dropped at a screen point: hand it to the window under the point, or open a new window there */
 ipcMain.handle('tab-drop', (e, { screenX, screenY, payload, allowNew, forceNew }) => {
   const src = winOf(e);
@@ -177,10 +212,55 @@ ipcMain.handle('open-dialog', async (_e, o = {}) => {
 ipcMain.handle('save-dialog', async (_e, { defaultPath, data, filters }) => {
   const r = await dialog.showSaveDialog(winOf(_e), { title: S.save, defaultPath, filters: filters || [{ name: 'PDF', extensions: ['pdf'] }] });
   if (r.canceled || !r.filePath) return null;
-  fs.writeFileSync(r.filePath, Buffer.from(data)); if (/\.pdf$/i.test(r.filePath)) addRecent(r.filePath);
-  return { path: r.filePath, name: path.basename(r.filePath) };
+  writeFileSafe(r.filePath, data); if (/\.pdf$/i.test(r.filePath)) addRecent(r.filePath);
+  return { path: r.filePath, name: path.basename(r.filePath), fp: fingerprint(r.filePath) };
 });
-ipcMain.handle('write-path', (_e, { path: p, data }) => { fs.writeFileSync(p, Buffer.from(data)); return true; });
+ipcMain.handle('write-path', (_e, { path: p, data }) => { writeFileSafe(p, data); return fingerprint(p); });
+ipcMain.handle('fingerprint', (_e, p) => fingerprint(p));
+
+/* ---------- notice when another program changes an open file ---------- */
+const watchLists = new Map(), dirWatchers = new Map(); const changeT = new Map();
+function rewatch() {
+  const want = new Map(); // dir -> Set(lowercased basenames)
+  for (const list of watchLists.values()) for (const p of list) { const d = path.dirname(p); if (!want.has(d)) want.set(d, new Set()); want.get(d).add(path.basename(p).toLowerCase()); }
+  for (const [d, w] of dirWatchers) if (!want.has(d)) { try { w.close(); } catch {} dirWatchers.delete(d); }
+  for (const [d, names] of want) {
+    if (dirWatchers.has(d)) { dirWatchers.get(d).names = names; continue; }
+    try {
+      const w = fs.watch(d, { persistent: false }, (_ev, fn) => {
+        if (!fn || !w.names.has(String(fn).toLowerCase())) return; const p = path.join(d, String(fn)), key = p.toLowerCase();
+        clearTimeout(changeT.get(key)); changeT.set(key, setTimeout(() => { // wait until the other program has finished writing
+          const fp = fingerprint(p); if (!fp || selfWrites.get(path.resolve(p).toLowerCase()) === fp) return;
+          wins.forEach(x => { if (!x.isDestroyed()) x.webContents.send('file-changed', { path: p, fp }); });
+        }, 700));
+      });
+      w.names = names; w.on('error', () => { try { w.close(); } catch {} dirWatchers.delete(d); }); dirWatchers.set(d, w);
+    } catch {}
+  }
+}
+ipcMain.handle('watch', (e, paths) => { watchLists.set(e.sender.id, (paths || []).filter(Boolean)); rewatch(); });
+
+/* ---------- crash recovery: unsaved work is mirrored to disk so a crash or power cut doesn't lose it ---------- */
+const recoveryDir = () => { const d = path.join(app.getPath('userData'), 'recovery'); fs.mkdirSync(d, { recursive: true }); return d; };
+const recKey = p => crypto.createHash('sha1').update(String(p).toLowerCase()).digest('hex').slice(0, 20);
+ipcMain.handle('recovery-save', (_e, { path: p, meta, bytes }) => {
+  try {
+    const d = recoveryDir(), k = recKey(p);
+    if (bytes) writeFileSafe(path.join(d, k + '.pdf'), bytes); else if (meta && !meta.hasBytes) fs.rmSync(path.join(d, k + '.pdf'), { force: true });
+    writeFileSafe(path.join(d, k + '.json'), JSON.stringify({ ...meta, path: p, savedAt: Date.now() })); return true;
+  } catch (e) { return false; }
+});
+ipcMain.handle('recovery-load', (_e, p) => {
+  try {
+    const d = recoveryDir(), k = recKey(p), j = path.join(d, k + '.json'); if (!fs.existsSync(j)) return null;
+    const meta = JSON.parse(fs.readFileSync(j, 'utf8')); if (meta.path !== p) return null;
+    let bytes = null; if (meta.hasBytes) { const b = fs.readFileSync(path.join(d, k + '.pdf')); bytes = new Uint8Array(b.buffer, b.byteOffset, b.length); }
+    return { meta, bytes };
+  } catch { return null; }
+});
+ipcMain.handle('recovery-clear', (_e, p) => { try { const d = recoveryDir(), k = recKey(p); fs.rmSync(path.join(d, k + '.json'), { force: true }); fs.rmSync(path.join(d, k + '.pdf'), { force: true }); } catch {} });
+/** Drop recovery data older than 30 days */
+function pruneRecovery() { try { const d = recoveryDir(), old = Date.now() - 30 * 864e5; for (const f of fs.readdirSync(d)) { const fp = path.join(d, f); if (fs.statSync(fp).mtimeMs < old) fs.rmSync(fp, { force: true }); } } catch {} }
 ipcMain.handle('show-in-folder', (_e, p) => shell.showItemInFolder(p));
 ipcMain.handle('set-title', (e, t) => { const w = winOf(e); if (w) w.setTitle(t); });
 ipcMain.handle('confirm', (_e, { message, detail, buttons }) => dialog.showMessageBoxSync(winOf(_e), { type: 'question', buttons, defaultId: 0, cancelId: buttons.length - 1, message, detail }));

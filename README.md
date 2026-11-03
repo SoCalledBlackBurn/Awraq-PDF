@@ -15,9 +15,19 @@
 ## Screenshots
 
 ### Reading
-Tabs like a browser, page thumbnails, outline and bookmarks, with several page layouts and zoom modes.
+Tabs like a browser, page thumbnails, outline and bookmarks, with floating page and zoom controls and a find panel over the page.
 
 <img src="docs/screenshots/01-reading.png" alt="Main window with tabs, page thumbnails and toolbar" width="860">
+
+### Edit text
+Click a line, type the new words and press Enter. The size, colour and page background are matched automatically.
+
+<img src="docs/screenshots/14-edit-text.png" alt="A line of text being edited in place" width="860">
+
+### Compare two versions
+See every word that was added or removed between two versions of a document, highlighted on the page.
+
+<img src="docs/screenshots/15-compare.png" alt="Comparison panel listing a change, with added words highlighted on the page" width="860">
 
 ### Comments & signing
 Highlights, underlines, shapes, sticky notes, stamps and signatures, saved as real PDF annotations that open in any reader.
@@ -50,21 +60,54 @@ Live preview with paper size, orientation, color, two-sided printing and margins
 <img src="docs/screenshots/07-print-preview.png" alt="Print dialog with live preview" width="860">
 
 ### Dark mode
-A dark theme for the interface, shown here with a two-page spread.
+A dark theme for the interface. There is also a high-contrast theme and six accent colours.
 
 <img src="docs/screenshots/08-dark-mode.png" alt="Dark theme with a two-page spread" width="860">
 
 ### Start screen
-Open or drop a PDF, turn images into a PDF, or pick up a recent file.
+Open or drop a PDF, combine or compare files, turn images into a PDF, continue where you stopped reading, or pick up a recent file. Pin the files you use most.
 
-<img src="docs/screenshots/09-start-screen.png" alt="Start screen with recent files" width="860">
+<img src="docs/screenshots/09-start-screen.png" alt="Start screen with recent files shown as cards with page previews" width="860">
+
+### Command palette
+Press **Ctrl+K** and type to find any command, in any interface language. Type a number to jump to that page.
+
+<img src="docs/screenshots/10-command-palette.png" alt="Command palette listing commands that match the word page" width="860">
+
+### Watermarks
+Any text, in any language, once or repeated across the page, with a live preview.
+
+<img src="docs/screenshots/11-watermark.png" alt="Watermark dialog with a repeated CONFIDENTIAL pattern in the preview" width="860">
+
+### Search results
+List every match in the sidebar, with the words around it.
+
+<img src="docs/screenshots/12-search-results.png" alt="Sidebar listing every search result with highlighted matches" width="860">
+
+### Every tool in one place
+The menu groups every command by task; the command palette (Ctrl+K) finds any of them by name.
+
+<img src="docs/screenshots/16-all-tools.png" alt="The menu with File, Pages, Protect and review, and View sections" width="860">
+
+### Arabic and right-to-left
+The whole interface mirrors for Arabic, with correct Arabic plural forms.
+
+<img src="docs/screenshots/17-arabic.png" alt="The interface in Arabic, mirrored right to left" width="860">
+
+### Work on several pages at once
+Ctrl+click or Shift+click thumbnails, then rotate, extract, recognize or delete them together. Everything can be undone.
+
+<img src="docs/screenshots/13-select-pages.png" alt="Three selected page thumbnails with a menu for acting on all of them" width="860">
 
 ## Features
 
-- **Reading:** tabs (drag to reorder, tear off into new windows), thumbnails, outline, bookmarks, attachments, continuous / single / horizontal / grid layouts, spreads, night mode, presentation mode, read aloud, advanced search.
+- **Safety:** crash recovery of unsaved work, safe saving that never leaves a half-written file, undo for page operations too, notice when another program changes an open file.
+- **Reading:** tabs (drag to reorder, tear off into new windows), thumbnails, outline, bookmarks, private per-file notes, attachments, continuous / single / horizontal / grid layouts, spreads, night and sepia pages, focus mode, presentation mode, read aloud, advanced search, continue reading.
 - **Comments (real PDF annotations, editable after reopening):** highlight, underline, strike-out, pen, shapes, arrows, text boxes, sticky notes, stamps, signatures, images.
 - **Security:** AES-256 password protection, permissions, true redaction (including "redact every match").
-- **Tools:** OCR for scanned files (Arabic, English, French, Spanish, German, Turkish), reduce file size, merge, split, extract, reorder, rotate, delete and insert pages, images → PDF, export as PNG / TXT, fill forms.
+- **Editing:** edit existing text (cover and retype), compare two versions word by word.
+- **Tools:** OCR for scanned files (Arabic, English, French, Spanish, German, Turkish), watermarks, page numbers, reduce file size, merge, combine into a new file, split, extract, reorder, rotate, duplicate, delete and insert pages (one or many at a time), insert images as pages, images → PDF, edit document properties, export as PNG / TXT, fill forms.
+- **Speed:** command palette (Ctrl+K), search results list, comment filters and summary export, copy a signature or stamp to every page, resizable sidebar.
 - **Printing:** built-in print dialog with live preview, paper size, orientation, color, two-sided and margins.
 
 ## Download
@@ -81,14 +124,19 @@ Requires [Node.js](https://nodejs.org/) 20+.
 ```bash
 npm install
 npm start          # run the app
+npm test           # end-to-end tests (Linux: xvfb-run -a npm test; needs qpdf and poppler-utils)
 npm run dist       # build installer + portable exe into dist/
 ```
 
+See [ROADMAP.md](ROADMAP.md) for what's planned next.
+
 ## Publishing a release
 
-1. Edit `version` in `package.json` (e.g. `2.3.2`) and commit.
+1. Edit `version` in `package.json` (e.g. `2.5.0`) and push to `main`.
 2. Open the **Actions** tab → **Release** → **Run workflow**.
-3. About 10 minutes later the installer and portable exe appear in **Releases**. Installed copies update themselves.
+3. The tests run first; if they pass, the installer and portable exe are built and published in **Releases** about 15 minutes later. Installed copies update themselves.
+
+To build locally instead: `npm run dist` puts both exe files in `dist/`. Upload `Awraq-PDF-Setup-<version>.exe`, its `.blockmap`, `latest.yml` and `Awraq-PDF-Portable-<version>.exe` to a new release tagged `v<version>` (without `latest.yml` installed copies won't find the update).
 
 ## Author
 

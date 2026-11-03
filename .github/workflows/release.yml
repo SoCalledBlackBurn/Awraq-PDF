@@ -1,15 +1,25 @@
 # Builds the Windows installer + portable exe and publishes them as a GitHub Release.
 # Run it from the browser: Actions tab → "Release" → "Run workflow".
-# The release number comes from "version" in package.json.
+# The release number comes from "version" in package.json (the tag v<version> is created for you).
+# The end-to-end tests run first; if any of them fails, nothing is published.
 name: Release
 on:
   workflow_dispatch:
-  push:
-    tags: ['v*']
 permissions:
   contents: write
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: sudo apt-get update && sudo apt-get install -y qpdf poppler-utils xvfb
+      - run: npm install
+      - run: xvfb-run -a -s "-screen 0 1400x900x24" npm test
   build:
+    needs: test
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4

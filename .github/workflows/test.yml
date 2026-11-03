@@ -1,0 +1,17 @@
+# Runs the end-to-end tests (the real app, driven by Playwright) on every push and pull request.
+name: Tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: sudo apt-get update && sudo apt-get install -y qpdf poppler-utils xvfb
+      - run: npm install
+      - run: xvfb-run -a -s "-screen 0 1400x900x24" npm test
